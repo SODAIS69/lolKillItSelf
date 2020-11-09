@@ -18,7 +18,7 @@ namespace lolKillItSelf
 {
     class Program
     {
-        
+
         static void Main(string[] args)
         {
 
@@ -27,7 +27,7 @@ namespace lolKillItSelf
             bool isAdmin = principal.IsInRole(WindowsBuiltInRole.Administrator);
             if (!isAdmin)
             {
-                Console.WriteLine("Please start as admin 請使用系統管理者開啟");
+                Console.WriteLine("Please start as admin 請使用系統管理員(封弊者)開啟");
                 Console.WriteLine("按任意鍵結束....");
                 //Console.ReadLine();// 使畫面停住
                 Console.ReadKey();  //可按任意鍵結束畫面
@@ -41,16 +41,11 @@ namespace lolKillItSelf
                 pg.DoLoopJob();
                 Thread.Sleep(500);
             }
-             
 
-        
-            
-            
 
-            
 
         }
-      
+
         public void DoLoopJob()
         {
             Program pg = new Program();
@@ -102,16 +97,16 @@ namespace lolKillItSelf
         }
         public string GetRawJson()
         {
-            Task<string> result = GetResponseJson();
+            Task<string> result = GetResponseJson();//httprequest
             string finalResult = result.Result;
             return finalResult;
         }
-       public async Task<string> GetResponseJson()
+        public async Task<string> GetResponseJson()
         {
-            string teststring = "";
+            string json = "";
 
             ServicePointManager.ServerCertificateValidationCallback +=
-                (sender, cert, chain, sslPolicyErrors) => { return true; };
+                (sender, cert, chain, sslPolicyErrors) => { return true; };//disabled certificate
             using (var httpClientHandler = new HttpClientHandler())
             {
                 //X509Certificate2 certificate = new X509Certificate2(@"riotgames.pem");
@@ -128,8 +123,8 @@ namespace lolKillItSelf
 
                         if (result.IsSuccessStatusCode)
                         {
-                            teststring = await result.Content.ReadAsStringAsync();
-                            return teststring;
+                            json = await result.Content.ReadAsStringAsync(); //read response content
+                            return json;
                         }
                         return null;
                     }
@@ -152,6 +147,12 @@ namespace lolKillItSelf
             var principal = new WindowsPrincipal(identity);
             return principal.IsInRole(WindowsBuiltInRole.Administrator);
         }
+        //json structure
+        //{
+        //    "Events":[{"EventName"="GameStart"},{"EventName"="GameEnd"},{ },{ }  ]
+        //}
+        //
+        //ref https://developer.riotgames.com/docs/lol#game-client-api
         public class Evendata
         {
             public List<EventDetail> Events = new List<EventDetail>();
